@@ -1,5 +1,5 @@
 import { Mail, Phone, MapPin, Heart } from "lucide-react";
-
+ 
 export default function Footer() {
   return (
     <footer className="bg-[#0f172a] text-white pt-16 pb-6 w-full px-3">
@@ -20,7 +20,7 @@ export default function Footer() {
             <span>Built with love for your success</span>
           </div>
         </div>
-
+ 
         {/* 📘 Features */}
         <div>
           <h3 className="text-white font-semibold mb-3">Features</h3>
@@ -32,7 +32,7 @@ export default function Footer() {
             <li>Mentoring</li>
           </ul>
         </div>
-
+ 
         {/* 🏢 Company */}
         <div>
           <h3 className="text-white font-semibold mb-3">Company</h3>
@@ -44,7 +44,7 @@ export default function Footer() {
             <li>Contact</li>
           </ul>
         </div>
-
+ 
         {/* 📞 Contact */}
         <div>
           <h3 className="text-white font-semibold mb-3">Contact</h3>
@@ -61,7 +61,7 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-
+ 
       {/* 📄 Bottom Bar */}
       <div className="mt-12 border-t border-gray-700 pt-6 text-sm text-gray-400 flex flex-col md:flex-row justify-between items-center gap-4">
         <p>

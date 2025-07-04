@@ -1,45 +1,60 @@
-
-
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import Navbar from './components/Navbar';
-import Footer from './components/landingpage/Footer';
-import Hero from './components/landingpage/Hero';
+import Login from '../src/components/pages/Login';
+import Register from '../src/components/pages/Register';
+import LandingPage from '../src/components/pages/LandingPage';
+import UserDashboard from '../src/components/user/UserDashboard';
+import AdminDashboard from '../src/components/admin/AdminDashboard';
 
-import Login from './pages/Login';
-import Register from './pages/Register';
-import UserDashboard from './pages/user/UserDashboard';
-import AdminDashboard from './pages/admin/AdminDashboard';
+import MainLayout from '../src/Layouts/MainLayout';
+import AdminLayout from './layouts/AdminLayout';
+import Profile from '../src/components/admin/Profile';
+
 
 function App() {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   return (
     <Router>
-      {/* Always show Navbar */}
-      <Navbar />
-
       <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Hero />} /> 
+
+        {/* Public Routes - No Layout */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* User Dashboard (Protected) */}
-        {isAuthenticated && user?.role === 'user' && (
-          <Route path="/user/dashboard" element={<UserDashboard />} />
-        )}
+        {/* Public Route with Layout */}
+        <Route path="/" element={
+          <MainLayout>
+            <LandingPage />
+          </MainLayout>
+        } />
 
-        {/* Admin Dashboard (Protected) */}
-        {isAuthenticated && user?.role === 'admin' && (
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        )}
+        {/* User Protected Route */}
+        <Route path="/user/dashboard" element={
+          
+            <MainLayout>
+              <UserDashboard />
+            </MainLayout>
+         
+        } />
+
+        {/* Admin Protected Route */}
+        <Route path="/admin/AdminDashboard" element={
+    
+            <AdminLayout>
+              <AdminDashboard />
+            </AdminLayout>
+         
+        } />
+        <Route path="/admin/profile" element={
+    <AdminLayout>
+      <Profile />
+    </AdminLayout>
+  } />
+      
+
       </Routes>
-
-      {/* Always show Footer */}
-      <Footer />
     </Router>
   );
 }
