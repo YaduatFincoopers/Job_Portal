@@ -1,7 +1,7 @@
 
 
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, BrowserRouter } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import Navbar from './components/Navbar';
@@ -12,35 +12,38 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import UserDashboard from './pages/user/UserDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import MockTest from './pages/user/MockTest';
+import ResumeBuilder from './pages/user/ResumeBuilder';
+import InterviewPreparation from './pages/user/InterviewPreparation';
+import CoverLetter from './pages/user/CoverLetter';
+import InterviewSchedule from './pages/user/InterviewSchedule';
+import ResumePreview from './pages/user/ResumePreview';
+import Jobs from './pages/user/Jobs';
 
 function App() {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   return (
-    <Router>
-      {/* Always show Navbar */}
-      <Navbar />
-
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Hero />} /> 
+    <BrowserRouter>
+    <Navbar />
+     <Routes>
+    <Route path="/" element={<Hero />} /> 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/user/UserDashboard" element={<UserDashboard />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path='/user/MockTest' element={<MockTest/>}/>
+        <Route path='/user/ResumeBuilder' element={<ResumeBuilder/>}/>
+        <Route path='/user/InterviewPreparation' element={<InterviewPreparation/>}/>
+        <Route path='/user/CoverLetter' element={<CoverLetter/>}/>
+        <Route path='/user/InterviewSchedule' element={<InterviewSchedule/>}/>
+        <Route path='/user/ResumePreview' element={<ResumePreview/>}/>
+        <Route path='/user/Jobs' element={<Jobs/>}/>
 
-        {/* User Dashboard (Protected) */}
-        {isAuthenticated && user?.role === 'user' && (
-          <Route path="/user/dashboard" element={<UserDashboard />} />
-        )}
-
-        {/* Admin Dashboard (Protected) */}
-        {isAuthenticated && user?.role === 'admin' && (
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        )}
-      </Routes>
-
-      {/* Always show Footer */}
+     </Routes>
       <Footer />
-    </Router>
+    </BrowserRouter>
+
   );
 }
 
