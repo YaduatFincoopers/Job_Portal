@@ -19,13 +19,16 @@ import CoverLetter from './pages/user/CoverLetter';
 import InterviewSchedule from './pages/user/InterviewSchedule';
 import ResumePreview from './pages/user/ResumePreview';
 import Jobs from './pages/user/Jobs';
+import Profile from './pages/admin/Profile';
+import Managepopup from './pages/admin/Managepopup';
+import TestGenerator from './pages/admin/TestGenerator';
 
 function App() {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   return (
     <BrowserRouter>
-    <Navbar />
+    {/* <Navbar /> */}
      <Routes>
     <Route path="/" element={<Hero />} /> 
         <Route path="/login" element={<Login />} />
@@ -39,7 +42,11 @@ function App() {
         <Route path='/user/InterviewSchedule' element={<InterviewSchedule/>}/>
         <Route path='/user/ResumePreview' element={<ResumePreview/>}/>
         <Route path='/user/Jobs' element={<Jobs/>}/>
-
+        <Route path='/admin/AdminDashboard'element={<AdminDashboard/>}/>
+        <Route path='/admin/Navbar' element={<Navbar/>}/>
+        <Route path='/admin/Profile' element={<Profile/>}/>
+        <Route path='/admin/Managepopup' element={<Managepopup/>}/>
+        <Route path='/admin/TestGenerator' element={<TestGenerator/>}/>
      </Routes>
       <Footer />
     </BrowserRouter>

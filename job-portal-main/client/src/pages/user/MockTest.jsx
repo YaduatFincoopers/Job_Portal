@@ -8,6 +8,7 @@ const MockTest = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [testCompleted, setTestCompleted] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
 
   const questions = [
     {
@@ -42,29 +43,43 @@ const MockTest = () => {
     },
   ];
 
-  const handleStartTest = () => setTestStarted(true);
+  const handleStartTest = () => {
+    setTestStarted(true);
+    setCurrentQuestion(0);
+    setScore(0);
+    setSelectedOption(null);
+    setTestCompleted(false);
+  };
 
-  const handleAnswer = (selectedOption) => {
+  const handleNext = () => {
     if (selectedOption === questions[currentQuestion].correctAnswer) {
       setScore((prev) => prev + 1);
     }
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion((prev) => prev + 1);
-    } else {
-      const finalScore = Math.round(
-        ((score + (selectedOption === questions[currentQuestion].correctAnswer ? 1 : 0)) /
-          questions.length) *
-          100
-      );
-      localStorage.setItem('mockTestScore', finalScore);
-      setTestCompleted(true);
+    setCurrentQuestion((prev) => prev + 1);
+    setSelectedOption(null);
+  };
+
+  const handlePrev = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion((prev) => prev - 1);
+      setSelectedOption(null);
     }
   };
 
- const handleFinish = () => {
-  navigate('/user/UserDashboard', { state: { testCompleted: true } });
-};
+  const handleSubmitTest = () => {
+    const isCorrect = selectedOption === questions[currentQuestion].correctAnswer;
+    const finalScore = isCorrect ? score + 1 : score;
+    const percentage = Math.round((finalScore / questions.length) * 100);
+    localStorage.setItem('mockTestScore', percentage);
+    setScore(finalScore);
+    setTestCompleted(true);
+  };
 
+  const handleFinish = () => {
+    navigate('/user/UserDashboard', {
+      state: { testCompleted: true, score },
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
@@ -97,7 +112,7 @@ const MockTest = () => {
             </button>
           </div>
         ) : (
-          <div>
+          <>
             {/* Progress Bar */}
             <div className="mb-6">
               <div className="w-full bg-gray-300 rounded-full h-3">
@@ -112,26 +127,68 @@ const MockTest = () => {
             </div>
 
             {/* Question */}
-            <h2 className="text-2xl font-semibold text-gray-800 mb-8">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
               {questions[currentQuestion].question}
             </h2>
 
             {/* Options */}
-            <div className="space-y-5">
+            <div className="space-y-4 mb-8">
               {questions[currentQuestion].options.map((option, index) => (
                 <button
                   key={index}
-                  onClick={() => handleAnswer(index)}
-                  className="w-full flex items-center p-5 bg-white border border-gray-200 rounded-xl hover:bg-blue-50 transition duration-300"
+                  type="button"
+                  onClick={() => setSelectedOption(index)}
+                  className={`w-full flex items-center p-4 border rounded-lg transition duration-200 ${
+                    selectedOption === index
+                      ? 'bg-blue-100 border-blue-500'
+                      : 'bg-white border-gray-300'
+                  } hover:bg-blue-50`}
                 >
-                  <span className="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-700 rounded-full mr-5">
+                  <span className="w-8 h-8 flex items-center justify-center bg-blue-100 text-blue-700 rounded-full mr-4">
                     {index + 1}
                   </span>
-                  <span className="text-lg text-gray-800">{option}</span>
+                  <span className="text-gray-800">{option}</span>
                 </button>
               ))}
             </div>
-          </div>
+
+            {/* Navigation Buttons */}
+            <div className="flex justify-between">
+              <button
+                disabled={currentQuestion === 0}
+                onClick={handlePrev}
+                className={`px-4 py-2 rounded-lg ${
+                  currentQuestion === 0
+                    ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                    : 'bg-gray-200 hover:bg-gray-300'
+                }`}
+              >
+                ⬅️ Prev
+              </button>
+
+              {currentQuestion < questions.length - 1 ? (
+                <button
+                  onClick={handleNext}
+                  disabled={selectedOption === null}
+                  className={`px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition ${
+                    selectedOption === null ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                >
+                  Next ➡️
+                </button>
+              ) : (
+                <button
+                  onClick={handleSubmitTest}
+                  disabled={selectedOption === null}
+                  className={`px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition ${
+                    selectedOption === null ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                >
+                  ✅ Submit Test
+                </button>
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>

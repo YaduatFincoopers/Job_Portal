@@ -205,6 +205,7 @@ import {
   Heart,
   Star,
 } from "lucide-react";
+import Navbar from "../Navbar";
 
 export default function Hero() {
   const steps = [
@@ -249,6 +250,7 @@ export default function Hero() {
   return (
     <>
       {/* 🔷 Hero Section */}
+      <Navbar/>
       <section className="w-full h-full bg-gradient-to-br from-blue-100 to-white pt-20 pb-10">
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center px-4 sm:px-8">
           {/* Left */}

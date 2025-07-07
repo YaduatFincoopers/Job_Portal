@@ -1,214 +1,158 @@
-// src/pages/user/CoverLetter.jsx
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import html2pdf from "html2pdf.js";
 
-function CoverLetter() {
-  const navigate = useNavigate();
-  const [template, setTemplate] = useState('template1');
+const CoverLetter = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    jobTitle: '',
-    company: '',
-    experience: '',
+    name: "",
+    email: "",
+    phone: "",
+    jobTitle: "",
+    company: "",
+    experienceYears: "",
+    skillset: "",
+    interestReason: "",
+    previousCompany: "",
+    achievement: "",
   });
-  const [generatedLetter, setGeneratedLetter] = useState('');
-  const [generationTime, setGenerationTime] = useState('');
 
-  const templates = {
-    template1: 'Classic',
-    template2: 'Modern',
-    template3: 'Creative',
+  const [generated, setGenerated] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const generateCoverLetter = () => {
-    const { name, email, phone, jobTitle, company, experience } = formData;
-    const currentTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
-    setGenerationTime(currentTime);
-
-    let letterContent = '';
-    switch (template) {
-      case 'template1':
-        letterContent = `
-${name || '[Your Name]'}
-${email || '[Your Email]'} | ${phone || '[Your Phone]'}
-${currentTime}
-
-[Hiring Manager]
-${company || '[Company Name]'}
-[Company Address]
-
-Dear Hiring Manager,
-
-I am excited to apply for the ${jobTitle || '[Job Title]'} position at ${company || '[Company Name]'}. With ${experience || '[Your Experience]'} of experience in [your field], I am confident in my ability to contribute to your team.
-
-[Your experience details go here. Highlight key achievements or skills.]
-
-I would welcome the opportunity to discuss how my background aligns with your needs. Thank you for considering my application.
-
-Sincerely,
-${name || '[Your Name]'}
-`;
-        break;
-      case 'template2':
-        letterContent = `
-${name || '[Your Name]'}
-${email || '[Your Email]'} | ${phone || '[Your Phone]'}
-${currentTime}
-
-${company || '[Company Name]'}
-Attn: Hiring Manager
-[Company Address]
-
-Dear Hiring Team,
-
-I am eager to apply for the ${jobTitle || '[Job Title]'} role at ${company || '[Company Name]'}. My ${experience || '[Your Experience]'} years in [your field] have equipped me with the skills to excel in this position.
-
-[Detail your relevant skills or projects here.]
-
-I look forward to the possibility of contributing to your success. Please feel free to contact me at your convenience.
-
-Best regards,
-${name || '[Your Name]'}
-`;
-        break;
-      case 'template3':
-        letterContent = `
-${name || '[Your Name]'}
-${email || '[Your Email]'} | ${phone || '[Your Phone]'}
-${currentTime}
-
-Hiring Manager
-${company || '[Company Name]'}
-[Company Address]
-
-Hello,
-
-I am thrilled to submit my application for the ${jobTitle || '[Job Title]'} position at ${company || '[Company Name]'}. With ${experience || '[Your Experience]'} years of experience, I bring a passion for [your field] and a track record of [key achievement].
-
-[Add a brief highlight of your accomplishments.]
-
-I’d love to explore how I can add value to your team. Thank you!
-
-Cheers,
-${name || '[Your Name]'}
-`;
-        break;
-      default:
-        letterContent = '';
-    }
-
-    setGeneratedLetter(letterContent);
+  const handleGenerate = (e) => {
+    e.preventDefault();
+    setGenerated(true);
   };
 
   const handleDownload = () => {
-    const blob = new Blob([generatedLetter], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'cover_letter.txt';
-    a.click();
-    window.URL.revokeObjectURL(url);
+    const element = document.getElementById("cover-letter");
+    html2pdf().from(element).save(`${formData.name}_CoverLetter.pdf`);
   };
 
-  const handleSave = () => {
-    if (generatedLetter) {
-      const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
-      userProfile.coverLetter = generatedLetter;
-      userProfile.coverLetterGenerated = true;
-      localStorage.setItem('userProfile', JSON.stringify(userProfile));
-      navigate('/candidate-dashboard', { state: { coverLetterSaved: true } });
-    }
+  const handleCopy = () => {
+    const text = document.getElementById("cover-letter").innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Cover letter copied to clipboard!");
+    });
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 text-gray-900">
-      <div className="max-w-4xl mx-auto bg-white rounded-xl p-8 shadow-lg border border-gray-200">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          Cover Letter Generator
-        </h1>
+    <div className="min-h-screen bg-gray-100 text-gray-900 p-8 font-sans">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <header className="mb-10 text-center">
+          <h1 className="text-4xl font-bold text-gray-900">💼 Cover Letter Generator</h1>
+          <p className="text-gray-600 mt-2">AI-style auto-filled professional letter</p>
+        </header>
 
-        {/* Template Selection */}
-        <div className="mb-6">
-          <label className="block text-lg font-semibold mb-2 text-gray-700">
-            Choose a Template:
-          </label>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {Object.entries(templates).map(([key, label]) => (
-              <button
-                key={key}
-                onClick={() => setTemplate(key)}
-                className={`p-4 rounded-lg border ${
-                  template === key
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-                } transition duration-200`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Form Inputs */}
-        <div className="mb-6 space-y-4">
-          {['name', 'email', 'phone', 'jobTitle', 'company', 'experience'].map((field) => (
-            <input
-              key={field}
-              name={field}
-              type="text"
-              value={formData[field]}
-              onChange={handleInputChange}
-              placeholder={
-                field
-                  .replace(/([A-Z])/g, ' $1')
-                  .replace(/^./, (str) => str.toUpperCase())
-              }
-              className="w-full p-3 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          ))}
-          <button
-            onClick={generateCoverLetter}
-            className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition duration-200"
+        {/* Form */}
+        {!generated && (
+          <form
+            onSubmit={handleGenerate}
+            className="grid grid-cols-1 gap-4 bg-white border border-gray-400 rounded-lg p-6 mb-10 shadow"
           >
-            Generate Cover Letter
-          </button>
-        </div>
+            <div className="flex flex-col gap-1 ">
+              <label>Name</label>
+              <input type="text" name="name" placeholder="Your Name" required value={formData.name} onChange={handleChange} className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              
+              <label>Email</label>
+              <input type="email" name="email" placeholder="Email" required value={formData.email} onChange={handleChange} className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label>Mobile Number</label>
+              <input type="text" name="phone" placeholder="Phone" required value={formData.phone} onChange={handleChange} className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label>Job Title</label>
+              <input type="text" name="jobTitle" placeholder="Job Title" required value={formData.jobTitle} onChange={handleChange} className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label>Company Name</label>
+              <input type="text" name="company" placeholder="Company Name" required value={formData.company} onChange={handleChange} className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label>Experience</label>
+              <input type="text" name="experienceYears" placeholder="Years of Experience" value={formData.experienceYears} onChange={handleChange} className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label>Skills</label>
+              <input type="text" name="skillset" placeholder="Key Skills" value={formData.skillset} onChange={handleChange} className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label>Previous Company</label>
+              <input type="text" name="previousCompany" placeholder="Previous Company" value={formData.previousCompany} onChange={handleChange} className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label>Achievement</label>
+              <input type="text" name="achievement" placeholder="Impressive Achievement" value={formData.achievement} onChange={handleChange} className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <label>Why This Company?</label>
+              <input type="text" name="interestReason" placeholder="Why this company?" value={formData.interestReason} onChange={handleChange} className="w-full px-4 py-2 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <button type="submit" className="mt-4 bg-gradient-to-r from-blue-600 to-green-500 text-white py-2 px-6 rounded-lg hover:brightness-110 transition">
+              Generate Cover Letter
+            </button>
+          </form>
+        )}
 
-        {/* Generated Letter */}
-        {generatedLetter && (
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Your Cover Letter:
-            </h2>
-            <pre className="bg-gray-50 p-4 rounded-lg border border-gray-300 overflow-auto max-h-60 text-gray-800 whitespace-pre-wrap">
-              {generatedLetter}
-            </pre>
-            <div className="flex gap-4 mt-4">
+        {/* Generated Cover Letter */}
+        {generated && (
+          <>
+            <section id="cover-letter" className="bg-white border border-gray-300 rounded-lg p-6 shadow text-gray-800">
+              <p className="mb-6">Dear Hiring Manager,</p>
+
+              <p className="mb-4">
+                I am writing to express my keen interest in the <strong>{formData.jobTitle}</strong> role at{" "}
+                <strong>{formData.company}</strong>. With a strong background in <strong>{formData.skillset}</strong> and over{" "}
+                <strong>{formData.experienceYears}</strong> years of experience, I am confident in my ability to contribute meaningfully to your team.
+              </p>
+
+              <p className="mb-4">
+                During my tenure at <strong>{formData.previousCompany}</strong>, I was involved in several projects that required deep focus on{" "}
+                {formData.skillset}. One of my most notable accomplishments was <strong>{formData.achievement}</strong>, which helped the company improve
+                performance and team output.
+              </p>
+
+              <p className="mb-4">
+                I am particularly drawn to <strong>{formData.company}</strong> because {formData.interestReason}. I admire your work and would love the
+                opportunity to grow within your organization and contribute to your mission.
+              </p>
+
+              <p className="mb-4">
+                I would be grateful for an opportunity to further discuss how I can be an asset to your team. Thank you for considering my application.
+              </p>
+
+              <p className="mb-6">
+                Best regards,<br />
+                <strong>{formData.name}</strong><br />
+                {formData.email}<br />
+                {formData.phone}
+              </p>
+            </section>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col md:flex-row gap-4 mt-6">
               <button
                 onClick={handleDownload}
-                className="flex-1 bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition duration-200"
+                className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
               >
-                Download as TXT
+                📥 Download PDF
               </button>
               <button
-                onClick={handleSave}
-                className="flex-1 bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition duration-200"
+                onClick={handleCopy}
+                className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition"
               >
-                Save Cover Letter
+                📋 Copy to Clipboard
+              </button>
+              <button
+                className="bg-gray-200 text-gray-800 border border-gray-400 py-2 px-4 rounded hover:bg-gray-300"
+                onClick={() => setGenerated(false)}
+              >
+                ✏️ Edit Inputs
               </button>
             </div>
-          </div>
+          </>
         )}
+
+        {/* Footer */}
+        {/* <footer className="text-center text-sm text-gray-500 mt-12">
+          <p>
+            Powered by <span className="text-blue-600 font-semibold">React</span> & Tailwind CSS | Simulated AI Output
+          </p>
+        </footer> */}
       </div>
     </div>
   );
-}
+};
 
 export default CoverLetter;
