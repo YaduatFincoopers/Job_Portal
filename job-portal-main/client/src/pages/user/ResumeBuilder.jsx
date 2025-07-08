@@ -30,8 +30,8 @@ const ResumeBuilder = () => {
   const templates = [
     {
       id: 'professional',
-      name: 'Professional (Ankit Patel Style)',
-      description: 'Clean, traditional design similar to Ankit Patel resume',
+      name: 'Professional',
+      description: 'Clean, traditional design  resume',
       preview: 'https://via.placeholder.com/300x400?text=Professional+Template',
       style: 'traditional'
     },
@@ -66,7 +66,7 @@ const ResumeBuilder = () => {
       const template = templates.find(t => t.id === selectedTemplate);
       
       if (template.id === 'professional') {
-        return generateAnkitPatelTemplate(userData);
+        return generateSwarupTemplate(userData);
       } else if (template.style === 'contemporary') {
         return generateModernTemplate(userData);
       } else {
@@ -116,7 +116,7 @@ const ResumeBuilder = () => {
     }
   };
 
-  const generateAnkitPatelTemplate = (userData) => {
+  const generateSwarupTemplate = (userData) => {
     return `
     <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
       <h1 style="font-size: 24px; font-weight: bold; margin-bottom: 10px;">${userData.fullName}</h1>
@@ -391,7 +391,7 @@ const ResumeBuilder = () => {
         experienceLevel
       };
 
-      navigate('/resume-preview', {
+      navigate('/user/ResumePreview', {
         state: {
           resumeData: enhancedResume,
           template: selectedTemplate,

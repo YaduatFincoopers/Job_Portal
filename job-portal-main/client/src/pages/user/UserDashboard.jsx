@@ -32,14 +32,14 @@ const UserDashboard = () => {
           type: 'success',
           message: `Mock test completed! Your score: ${savedScore || 0}%`,
         });
-        navigate('/candidate-dashboard', { replace: true, state: {} });
+        navigate('/user/UserDashboard ', { replace: true, state: {} });
         setTimeout(() => setNotification(null), 3000);
       } else if (location.state?.resumeSaved) {
         setNotification({
           type: 'success',
           message: 'Resume saved successfully!',
         });
-        navigate('/candidate-dashboard', { replace: true, state: {} });
+        navigate('/user/UserDashboard', { replace: true, state: {} });
         setTimeout(() => setNotification(null), 3000);
       }
     } catch (error) {
@@ -79,8 +79,8 @@ const UserDashboard = () => {
     {
       title: 'Cover Letter Generator',
       desc: 'Generate personalized cover letters',
-      icon: <FiMessageSquare className="text-purple-500 text-xl" />,
-      available: !hasGeneratedCoverLetter,
+      icon: <FiMessageSquare className={isUnlocked} />,
+      available: isUnlocked,
       onClick: () => navigate('/user/CoverLetter'),
     },
     {
@@ -95,7 +95,7 @@ const UserDashboard = () => {
       desc: 'Practice with AI-generated interview questions',
       icon: <FiSearch className={isUnlocked ? 'text-yellow-500 text-xl' : 'text-gray-400 text-xl'} />,
       available: isUnlocked,
-      onClick: () => navigate('/user/ResumePreview'),
+      onClick: () => navigate('/user/InterviewPreparation'),
     },
     {
       title: 'InterviewSchedule',

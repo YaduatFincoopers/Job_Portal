@@ -1,20 +1,28 @@
+// ResumePreview.jsx
+
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 
 const ResumePreview = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [resume, setResume] = useState('');
 
   useEffect(() => {
-    const stored = localStorage.getItem('userResume');
-    if (stored) {
-      setResume(stored);
+    if (location.state?.resumeData?.aiEnhancedContent) {
+      setResume(location.state.resumeData.aiEnhancedContent);
+      localStorage.setItem('userResume', location.state.resumeData.aiEnhancedContent);
     } else {
-      alert('No resume found!');
-      navigate('/jobs');
+      const stored = localStorage.getItem('userResume');
+      if (stored) {
+        setResume(stored);
+      } else {
+        alert('No resume found!');
+        navigate('/resume-builder');
+      }
     }
-  }, [navigate]);
+  }, [location, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-indigo-100 p-6 sm:p-10">
@@ -29,7 +37,7 @@ const ResumePreview = () => {
           Resume Preview
         </h1>
         <div className="prose bg-gray-50 p-4 rounded-lg max-h-[70vh] overflow-y-auto">
-          <pre className="whitespace-pre-wrap break-words text-sm sm:text-base text-gray-800">{resume}</pre>
+          <div dangerouslySetInnerHTML={{ __html: resume }} />
         </div>
       </div>
     </div>
