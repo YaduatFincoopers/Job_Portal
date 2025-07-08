@@ -7,6 +7,8 @@ import LandingPage from '../src/components/pages/LandingPage';
 import UserDashboard from '../src/components/user/UserDashboard';
 import AdminDashboard from '../src/components/admin/AdminDashboard';
 
+import InterviewPreparation from './pages/user/InterviewPreparation';
+
 import MainLayout from '../src/Layouts/MainLayout';
 import AdminLayout from './layouts/AdminLayout';
 import Profile from '../src/components/admin/Profile';
@@ -37,6 +39,13 @@ function App() {
               <UserDashboard />
             </MainLayout>
          
+        } />
+
+        {/* Interview Preparation Page (User) */}
+        <Route path="/user/interview-preparation" element={
+          <MainLayout>
+            <InterviewPreparation />
+          </MainLayout>
         } />
 
         {/* Admin Protected Route */}
