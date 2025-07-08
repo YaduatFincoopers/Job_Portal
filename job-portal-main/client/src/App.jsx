@@ -34,7 +34,8 @@ function AppContent() {
     '/user/Jobs',
     '/user/CoverLetter',
     '/user/InterviewPreparation',
-    '/user/InterviewSchedule'
+    '/user/InterviewSchedule',
+    '/user/UserDashboard'
     // add more if needed
   ];
 
