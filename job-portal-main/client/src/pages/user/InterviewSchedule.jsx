@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FiCalendar, FiClock, FiEdit2, FiX, FiCheck } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { IoIosArrowBack } from 'react-icons/io';
 
 const InterviewSchedule = () => {
+    const navigate = useNavigate();
   const [selectedMentor, setSelectedMentor] = useState(null);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
@@ -104,8 +107,20 @@ const InterviewSchedule = () => {
     };
   }, []);
 
+    const handleFinish = () => {
+    navigate('/user/UserDashboard', {
+      state: { testCompleted: true, score },
+    });
+  };
+
   return (
     <div className="w-full max-w-6xl mx-auto p-6">
+      <div className="flex justify-between items-center mb-6">
+                                <button onClick={() => navigate('/user/UserDashboard')} className="flex items-center text-black-600 hover:underline">
+                                  <IoIosArrowBack className="mr-1" />
+                                  Back to Dashboard
+                                </button>
+                              </div>
       <h1 className="text-3xl font-bold text-center mb-8">Interview Scheduling</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {mentors.map((mentor) => (

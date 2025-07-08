@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { FiBriefcase, FiMapPin, FiDollarSign, FiClock, FiEye, FiEdit2, FiUpload, FiSave, FiX } from 'react-icons/fi';
 import { FaReact } from 'react-icons/fa';
 import { SiMongodb, SiExpress, SiReact, SiNodedotjs } from 'react-icons/si';
+import { IoIosArrowBack } from 'react-icons/io';
 
 const Jobs = () => {
   const navigate = useNavigate();
@@ -136,10 +137,21 @@ const Jobs = () => {
     setEditMode(false);
     setSelectedJob(null);
   };
+    const handleFinish = () => {
+    navigate('/user/UserDashboard', {
+      state: { testCompleted: true, score },
+    });
+  };
 
   return (
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
+         <div className="flex justify-between items-center mb-6">
+                          <button onClick={() => navigate('/user/UserDashboard')} className="flex items-center text-black-600 hover:underline">
+                            <IoIosArrowBack className="mr-1" />
+                            Back to Dashboard
+                          </button>
+                        </div>
         <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-8 animate-pulse">
           Job Opportunities
         </h1>

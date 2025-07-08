@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IoIosArrowBack } from 'react-icons/io';
 
 const ResumeBuilder = () => {
   const navigate = useNavigate();
@@ -406,10 +407,21 @@ const ResumeBuilder = () => {
       setApiCalls(prev => prev + 1);
     }
   };
+   const handleFinish = () => {
+    navigate('/user/UserDashboard', {
+      state: { testCompleted: true, score },
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+                  <button onClick={() => navigate('/user/UserDashboard')} className="flex items-center text-black-600 hover:underline">
+                    <IoIosArrowBack className="mr-1" />
+                    Back to Dashboard
+                  </button>
+                </div>
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-gray-900 mb-2">AI Resume Builder</h1>
           <p className="text-lg text-gray-600">

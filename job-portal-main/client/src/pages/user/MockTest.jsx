@@ -1,16 +1,16 @@
-// src/pages/user/MockTest.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IoIosArrowBack } from 'react-icons/io';
 
 const MockTest = () => {
   const navigate = useNavigate();
-  const [testStarted, setTestStarted] = useState(false);
+  const [view, setView] = useState('assigned');
+  const [testMeta, setTestMeta] = useState({ name: '', category: '' });
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
-  const [testCompleted, setTestCompleted] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
-
-  const questions = [
+  const [userAnswers, setUserAnswers] = useState([]);
+  const [questions] = useState([
     {
       question: 'What is React?',
       options: [
@@ -41,38 +41,62 @@ const MockTest = () => {
       ],
       correctAnswer: 0,
     },
-  ];
+  ]);
 
-  const handleStartTest = () => {
-    setTestStarted(true);
+  useEffect(() => {
+    setSelectedOption(userAnswers[currentQuestion] ?? null);
+  }, [currentQuestion]);
+
+  const selectTest = (name, category) => {
+    setTestMeta({ name, category });
+    setView('instructions');
+  };
+
+  const startTest = () => {
+    setUserAnswers(Array(questions.length).fill(null));
     setCurrentQuestion(0);
     setScore(0);
     setSelectedOption(null);
-    setTestCompleted(false);
+    setView('test');
+  };
+
+  const handleOptionSelect = (index) => {
+    if (userAnswers[currentQuestion] === null) setSelectedOption(index);
   };
 
   const handleNext = () => {
-    if (selectedOption === questions[currentQuestion].correctAnswer) {
-      setScore((prev) => prev + 1);
+    const updated = [...userAnswers];
+    if (updated[currentQuestion] === null) {
+      updated[currentQuestion] = selectedOption;
+      if (selectedOption === questions[currentQuestion].correctAnswer) {
+        setScore((prev) => prev + 1);
+      }
     }
+    setUserAnswers(updated);
     setCurrentQuestion((prev) => prev + 1);
     setSelectedOption(null);
   };
 
   const handlePrev = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion((prev) => prev - 1);
-      setSelectedOption(null);
-    }
+    setCurrentQuestion((prev) => prev - 1);
   };
 
-  const handleSubmitTest = () => {
-    const isCorrect = selectedOption === questions[currentQuestion].correctAnswer;
-    const finalScore = isCorrect ? score + 1 : score;
+  const handleSubmit = () => {
+    const updated = [...userAnswers];
+    if (updated[currentQuestion] === null) {
+      updated[currentQuestion] = selectedOption;
+    }
+
+    let finalScore = 0;
+    updated.forEach((ans, i) => {
+      if (ans === questions[i].correctAnswer) finalScore += 1;
+    });
+
     const percentage = Math.round((finalScore / questions.length) * 100);
-    localStorage.setItem('mockTestScore', percentage);
+    setUserAnswers(updated);
     setScore(finalScore);
-    setTestCompleted(true);
+    localStorage.setItem('mockTestScore', percentage);
+    setView('result');
   };
 
   const handleFinish = () => {
@@ -82,114 +106,147 @@ const MockTest = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="max-w-2xl w-full bg-white rounded-xl p-8 shadow-lg border">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Mock Test</h1>
+    <div className="min-h-screen bg-[#f9fafb] p-6">
+      <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-8">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <button onClick={() => navigate('/user/UserDashboard')} className="flex items-center text-gray-600 hover:underline">
+            <IoIosArrowBack className="mr-1" />
+            Back to Dashboard
+          </button>
+        </div>
 
-        {!testStarted ? (
-          <div className="text-center">
-            <p className="text-gray-600 mb-8">
-              Prepare yourself for the mock test to unlock job opportunities. Click the button below to begin.
-            </p>
+        {/* Assigned Tests */}
+        {view === 'assigned' && (
+          <>
+            <h1 className="text-2xl font-bold mb-2">Assigned Tests</h1>
+            <p className="text-gray-600 mb-6">Select a test to begin</p>
+
+            <div className="bg-gray-50 border rounded-lg p-4 flex justify-between items-center">
+              <div>
+                <h2 className="text-md font-semibold">test2</h2>
+                <p className="text-sm text-gray-500">Category: JavaScript</p>
+              </div>
+              <button
+                onClick={() => selectTest('test2', 'JavaScript')}
+                className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm"
+              >
+                Take Test
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* Instructions */}
+        {view === 'instructions' && (
+          <>
+            <h1 className="text-2xl font-bold mb-2">{testMeta.name}</h1>
+            <p className="text-gray-600 mb-1">Category: {testMeta.category}</p>
+            <p className="text-gray-600 mb-6">Test your knowledge with our practice questions</p>
+
+            <div className="bg-blue-50 border border-blue-100 rounded-lg p-6 text-gray-800 mb-6">
+              <h2 className="font-semibold text-lg mb-3">Test Instructions</h2>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li>Total Questions: {questions.length}</li>
+                <li>Each question has 4 options</li>
+                <li>You can navigate between questions</li>
+                <li>Click "Submit Test" when you're done</li>
+              </ul>
+            </div>
+
             <button
-              onClick={handleStartTest}
-              className="bg-blue-600 text-white px-8 py-4 rounded-full hover:bg-blue-700 transition duration-300"
+              onClick={startTest}
+              className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-3 rounded-lg font-semibold"
             >
               Start Test
             </button>
-          </div>
-        ) : testCompleted ? (
-          <div className="text-center">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">Test Completed!</h2>
-            <p className="text-lg text-gray-700 mb-8">
-              Your score: {Math.round((score / questions.length) * 100)}%
-            </p>
-            <button
-              onClick={handleFinish}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300"
-            >
-              Return to Dashboard
-            </button>
-          </div>
-        ) : (
+          </>
+        )}
+
+        {/* Test View */}
+        {view === 'test' && (
           <>
-            {/* Progress Bar */}
-            <div className="mb-6">
-              <div className="w-full bg-gray-300 rounded-full h-3">
+            <div className="mb-4">
+              <div className="flex justify-between text-sm text-gray-600 mb-1">
+                <span>Question {currentQuestion + 1} of {questions.length}</span>
+                <span>Category: {testMeta.category}</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
-                  className="bg-blue-600 h-3 rounded-full transition-all duration-500"
+                  className="bg-blue-500 h-2 rounded-full transition-all"
                   style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
                 />
               </div>
-              <p className="text-sm text-gray-600 mt-2">
-                Question {currentQuestion + 1} of {questions.length}
-              </p>
             </div>
 
-            {/* Question */}
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-              {questions[currentQuestion].question}
-            </h2>
+            <h2 className="text-xl font-semibold mb-6">{questions[currentQuestion].question}</h2>
 
-            {/* Options */}
             <div className="space-y-4 mb-8">
-              {questions[currentQuestion].options.map((option, index) => (
+              {questions[currentQuestion].options.map((option, idx) => (
                 <button
-                  key={index}
-                  type="button"
-                  onClick={() => setSelectedOption(index)}
-                  className={`w-full flex items-center p-4 border rounded-lg transition duration-200 ${
-                    selectedOption === index
-                      ? 'bg-blue-100 border-blue-500'
-                      : 'bg-white border-gray-300'
-                  } hover:bg-blue-50`}
+                  key={idx}
+                  onClick={() => handleOptionSelect(idx)}
+                  disabled={userAnswers[currentQuestion] !== null}
+                  className={`w-full text-left px-4 py-3 border rounded-lg transition ${
+                    selectedOption === idx ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+                  } ${userAnswers[currentQuestion] !== null ? 'opacity-60 cursor-not-allowed' : ''}`}
                 >
-                  <span className="w-8 h-8 flex items-center justify-center bg-blue-100 text-blue-700 rounded-full mr-4">
-                    {index + 1}
-                  </span>
-                  <span className="text-gray-800">{option}</span>
+                  {option}
                 </button>
               ))}
             </div>
 
-            {/* Navigation Buttons */}
+            {/* Nav Buttons */}
             <div className="flex justify-between">
               <button
-                disabled={currentQuestion === 0}
                 onClick={handlePrev}
-                className={`px-4 py-2 rounded-lg ${
-                  currentQuestion === 0
-                    ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                    : 'bg-gray-200 hover:bg-gray-300'
-                }`}
+                disabled={currentQuestion === 0}
+                className="px-4 py-2 border rounded-md text-sm disabled:opacity-50"
               >
-                ⬅️ Prev
+                Previous
               </button>
 
               {currentQuestion < questions.length - 1 ? (
                 <button
                   onClick={handleNext}
                   disabled={selectedOption === null}
-                  className={`px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition ${
-                    selectedOption === null ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
+                  className="bg-black text-white px-6 py-2 rounded-md text-sm disabled:opacity-50"
                 >
-                  Next ➡️
+                  Next
                 </button>
               ) : (
                 <button
-                  onClick={handleSubmitTest}
+                  onClick={handleSubmit}
                   disabled={selectedOption === null}
-                  className={`px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition ${
-                    selectedOption === null ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
+                  className="bg-green-600 text-white px-6 py-2 rounded-md text-sm disabled:opacity-50"
                 >
-                  ✅ Submit Test
+                  Submit Test
                 </button>
               )}
             </div>
           </>
         )}
+
+        {/* Result */}
+        {view === 'result' && (
+  <div className="text-center mt-8">
+    <h2 className="text-2xl font-bold text-green-600 mb-2">🎉 Congratulations!</h2>
+    <p className="text-gray-700 text-lg mb-1">You have completed <strong>{testMeta.name}</strong></p>
+    <p className="text-gray-600 mb-1">Category: <strong>{testMeta.category}</strong></p>
+    <p className="text-gray-800 font-medium mb-1">You answered <strong>{score}</strong> out of <strong>{questions.length}</strong> questions correctly.</p>
+    <p className="text-gray-900 font-semibold text-xl mb-6">
+      Score: <span className="text-blue-600">{Math.round((score / questions.length) * 100)}%</span>
+    </p>
+
+    <button
+      onClick={handleFinish}
+      className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+    >
+      Back to Dashboard
+    </button>
+  </div>
+)}
+
       </div>
     </div>
   );

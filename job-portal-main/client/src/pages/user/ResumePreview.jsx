@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
+import { IoIosArrowBack } from 'react-icons/io';
 
 const ResumePreview = () => {
   const navigate = useNavigate();

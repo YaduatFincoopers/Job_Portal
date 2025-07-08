@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import html2pdf from "html2pdf.js";
+import { IoIosArrowBack } from 'react-icons/io';
 
 const CoverLetter = () => {
   const [info, setInfo] = useState({
@@ -43,9 +44,19 @@ const CoverLetter = () => {
       .writeText(document.getElementById("letter").innerText)
       .then(() => alert("Copied!"));
   };
-
+   const handleFinish = () => {
+    navigate('/user/UserDashboard', {
+      state: { testCompleted: true, score },
+    });
+  };
   return (
     <div className="p-8 min-h-screen bg-gray-100 font-serif text-gray-900">
+      <div className="flex justify-between items-center">
+                                  <button onClick={() => navigate('/user/UserDashboard')} className="flex items-center text-black-600 hover:underline">
+                                    <IoIosArrowBack className="mr-1" />
+                                    Back to Dashboard
+                                  </button>
+                                </div>
       <div
         className={`max-w-7xl mx-auto gap-8 ${
           show ? "flex flex-col lg:flex-row" : "flex justify-center"
