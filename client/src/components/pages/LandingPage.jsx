@@ -12,8 +12,12 @@ import {
   Heart,
   Star,
 } from "lucide-react";
+<<<<<<< HEAD:client/src/components/pages/LandingPage.jsx
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
+=======
+import Navbar from "../Navbar";
+>>>>>>> 01d73105aa2b11379a6825c7c307b5cea8deedfd:job-portal-main/client/src/components/landingpage/Hero.jsx
 
  function LandingPage() {
   const steps = [
@@ -57,8 +61,13 @@ import Header from "./Header";
 
   return (
     <>
+<<<<<<< HEAD:client/src/components/pages/LandingPage.jsx
  
       <Header/>
+=======
+      {/* 🔷 Hero Section */}
+      <Navbar/>
+>>>>>>> 01d73105aa2b11379a6825c7c307b5cea8deedfd:job-portal-main/client/src/components/landingpage/Hero.jsx
       <section className="w-full h-full bg-gradient-to-br from-blue-100 to-white pt-20 pb-10">
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-center px-4 sm:px-8">
           {/* Left */}
