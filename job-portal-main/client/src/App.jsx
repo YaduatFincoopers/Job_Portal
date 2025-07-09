@@ -10,6 +10,9 @@ import AdminDashboard from '../src/components/admin/AdminDashboard';
 import MainLayout from '../src/Layouts/MainLayout';
 import AdminLayout from './layouts/AdminLayout';
 import Profile from '../src/components/admin/Profile';
+import JobApplication from './components/admin/JobApplication';
+import TestGenerator from './components/admin/TestGenerator';
+
 
 
 function App() {
@@ -22,6 +25,12 @@ function App() {
         {/* Public Routes - No Layout */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        <Route path="/admin/JobApplication" element={<JobApplication />} />
+        <Route path="/admin/TestGenerator" element={<TestGenerator />} />
+
+
+
 
         {/* Public Route with Layout */}
         <Route path="/" element={
@@ -43,7 +52,7 @@ function App() {
         <Route path="/admin/AdminDashboard" element={
     
             <AdminLayout>
-              <AdminDashboard />
+              <AdminDashboard /> 
             </AdminLayout>
          
         } />

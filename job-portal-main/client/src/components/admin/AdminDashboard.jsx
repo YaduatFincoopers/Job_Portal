@@ -104,9 +104,10 @@ const AdminDashboard = () => {
                                                 }`}
                                             onClick={() => {
                                                 if (sec.status !== "Coming Soon") {
-                                                    if (sec.title === "Test Generator") navigate("/TestGenerator");
+                                                    if (sec.title === "Test Generator") navigate("/admin/TestGenerator");
                                                     else if (sec.title === "User Management") setShowUserModal(true);
-                                                    else if (sec.title === "Job Applications") navigate("/JobApplication")
+                                                    else if (sec.title === "Job Applications") navigate("/admin/JobApplication");
+                                        
                                                 }
                                             }}
                                         >
