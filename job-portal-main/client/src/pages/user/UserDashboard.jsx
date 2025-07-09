@@ -13,26 +13,21 @@ const UserDashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
-  const hasGeneratedCoverLetter = userProfile.coverLetterGenerated || false;
 
   useEffect(() => {
     try {
       const savedScore = localStorage.getItem('mockTestScore');
       const savedResume = localStorage.getItem('userResume');
 
-      if (savedScore) {
-        setTestScore(parseInt(savedScore, 10));
-      }
-      if (savedResume) {
-        setHasResume(true);
-      }
+      if (savedScore) setTestScore(parseInt(savedScore, 10));
+      if (savedResume) setHasResume(true);
 
       if (location.state?.testCompleted) {
         setNotification({
           type: 'success',
           message: `Mock test completed! Your score: ${savedScore || 0}%`,
         });
-        navigate('/user/UserDashboard ', { replace: true, state: {} });
+        navigate('/user/UserDashboard', { replace: true, state: {} });
         setTimeout(() => setNotification(null), 3000);
       } else if (location.state?.resumeSaved) {
         setNotification({
@@ -43,7 +38,7 @@ const UserDashboard = () => {
         setTimeout(() => setNotification(null), 3000);
       }
     } catch (error) {
-      console.error('Error in CandidateDashboard useEffect:', error);
+      console.error('Error in UserDashboard useEffect:', error);
       setNotification({
         type: 'error',
         message: 'Failed to load dashboard data. Please try again.',
@@ -62,7 +57,7 @@ const UserDashboard = () => {
   const isUnlocked = testScore >= 75;
 
   const features = [
-        {
+    {
       title: 'Resume Builder',
       desc: 'Create professional resumes with AI assistance',
       icon: <FiFileText className="text-blue-500 text-xl" />,
@@ -72,53 +67,53 @@ const UserDashboard = () => {
     {
       title: 'Mock Test',
       desc: 'Test your knowledge with practice questions',
-      icon: <FiAward className="text-yellow-500 text-xl" />,
-      available: true,
-      onClick: () => navigate('/user/MockTest'),
+      icon: <FiAward className={hasResume ? 'text-yellow-500 text-xl' : 'text-gray-400 text-xl'} />,
+      available: hasResume,
+      onClick: () => {
+        if (hasResume) navigate('/user/MockTest');
+      },
     },
     {
       title: 'Cover Letter Generator',
       desc: 'Generate personalized cover letters',
-      icon: <FiMessageSquare className={isUnlocked} />,
+      icon: <FiMessageSquare className={isUnlocked ? 'text-purple-500 text-xl' : 'text-gray-400 text-xl'} />,
       available: isUnlocked,
-      onClick: () => navigate('/user/CoverLetter'),
+      onClick: () => {
+        if (isUnlocked) navigate('/user/CoverLetter');
+      },
     },
     {
       title: 'Jobs',
       desc: 'Browse and apply to job opportunities',
       icon: <FiBriefcase className={isUnlocked ? 'text-green-500 text-xl' : 'text-gray-400 text-xl'} />,
       available: isUnlocked,
-      onClick: () => navigate('/user/Jobs'),
+      onClick: () => {
+        if (isUnlocked) navigate('/user/Jobs');
+      },
     },
     {
       title: 'InterviewPreparation',
       desc: 'Practice with AI-generated interview questions',
       icon: <FiSearch className={isUnlocked ? 'text-yellow-500 text-xl' : 'text-gray-400 text-xl'} />,
       available: isUnlocked,
-      onClick: () => navigate('/user/InterviewPreparation'),
+      onClick: () => {
+        if (isUnlocked) navigate('/user/InterviewPreparation');
+      },
     },
     {
       title: 'InterviewSchedule',
       desc: 'Schedule interviews with mentors',
       icon: <FiCalendar className={isUnlocked ? 'text-green-500 text-xl' : 'text-gray-400 text-xl'} />,
       available: isUnlocked,
-      onClick: () => navigate('/user/InterviewSchedule'),
+      onClick: () => {
+        if (isUnlocked) navigate('/user/InterviewSchedule');
+      },
     },
-  ].filter((feature) => feature.available || feature.title !== 'Resume Builder');
+  ];
 
-  const handleLogout = () => {
-    console.log('Logging out...');
-    navigate('/login');
-  };
-
-  const handleStatus = () => {
-    console.log('Viewing status...');
-  };
-
-  const handleProfile = () => {
-    console.log('Navigating to profile...');
-    navigate('/profile');
-  };
+  const handleLogout = () => navigate('/login');
+  const handleStatus = () => navigate('/user/Status');
+  const handleProfile = () => navigate('/user/UserProfile');
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
@@ -163,13 +158,11 @@ const UserDashboard = () => {
 
       <div className="p-6">
         {notification && (
-          <div
-            className={`mb-6 p-4 rounded-lg border-l-4 ${
-              notification.type === 'success'
-                ? 'bg-green-100 border-green-500 text-green-800'
-                : 'bg-red-100 border-red-500 text-red-800'
-            }`}
-          >
+          <div className={`mb-6 p-4 rounded-lg border-l-4 ${
+            notification.type === 'success'
+              ? 'bg-green-100 border-green-500 text-green-800'
+              : 'bg-red-100 border-red-500 text-red-800'
+          }`}>
             <p className="font-semibold">{notification.type === 'success' ? 'Success' : 'Error'}:</p>
             <p>{notification.message}</p>
             <button
@@ -193,9 +186,11 @@ const UserDashboard = () => {
             <FiAward className="mt-1" />
             <div>
               <strong className="font-semibold block">Complete Your Profile</strong>
-              {testScore > 0
-                ? `You scored ${testScore}%. Need ${75 - testScore}% more to unlock job features.`
-                : 'Take a mock test and score 75% or higher to unlock job applications and interview features.'}
+              {!hasResume
+                ? 'Build your resume to unlock the Mock Test.'
+                : testScore > 0
+                  ? `You scored ${testScore}%. Need ${75 - testScore}% more to unlock job features.`
+                  : 'Take a mock test and score 75% or higher to unlock job features.'}
             </div>
           </div>
         ) : (
@@ -210,30 +205,16 @@ const UserDashboard = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Stat title="Resumes Created" value={user.resumesCreated} icon={<FiFileText className="text-blue-500" />} />
-          <Stat
-            title="Job Applications"
-            value={user.jobApplications}
-            icon={<FiBriefcase className={isUnlocked ? 'text-green-500' : 'text-gray-400'} />}
-          />
-          <Stat
-            title="Interviews Scheduled"
-            value={user.interviewsScheduled}
-            icon={<FiCalendar className={isUnlocked ? 'text-green-500' : 'text-gray-400'} />}
-          />
-          <Stat
-            title="Best Test Score"
-            value={`${user.testScore}%`}
-            icon={<FiAward className={isUnlocked ? 'text-green-500' : 'text-yellow-500'} />}
-          />
+          <Stat title="Job Applications" value={user.jobApplications} icon={<FiBriefcase className={isUnlocked ? 'text-green-500' : 'text-gray-400'} />} />
+          <Stat title="Interviews Scheduled" value={user.interviewsScheduled} icon={<FiCalendar className={isUnlocked ? 'text-green-500' : 'text-gray-400'} />} />
+          <Stat title="Best Test Score" value={`${user.testScore}%`} icon={<FiAward className={isUnlocked ? 'text-green-500' : 'text-yellow-500'} />} />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {features.map((item, idx) => (
             <div
               key={idx}
-              className={`rounded-lg p-5 shadow-md border ${
-                item.available ? 'bg-white hover:shadow-lg' : 'bg-gray-100'
-              } transition-all duration-300`}
+              className={`rounded-lg p-5 shadow-md border ${item.available ? 'bg-white hover:shadow-lg' : 'bg-gray-100'} transition-all duration-300`}
             >
               <div className="flex items-center gap-3 mb-3">
                 {item.icon}
@@ -247,9 +228,7 @@ const UserDashboard = () => {
               <div className="flex justify-between items-center mt-4">
                 {item.available ? (
                   <>
-                    <span className="text-green-600 text-xs bg-green-100 px-2 py-1 rounded-full">
-                      Available
-                    </span>
+                    <span className="text-green-600 text-xs bg-green-100 px-2 py-1 rounded-full">Available</span>
                     <button
                       onClick={item.onClick}
                       className="bg-gradient-to-r from-blue-400 to-purple-400 text-white px-4 py-2 text-sm rounded-lg hover:from-blue-500 hover:to-purple-500 transition duration-300 shadow-md"
@@ -259,8 +238,15 @@ const UserDashboard = () => {
                   </>
                 ) : (
                   <>
-                    <span className="text-red-500 text-xs">Requires 75% test score</span>
-                    <span className="bg-gray-200 text-gray-500 text-xs px-3 py-1 rounded-lg">Locked</span>
+                    <span className="text-red-500 text-xs">
+                      {item.title === 'Mock Test' ? 'Requires Resume' : 'Requires 75% test score'}
+                    </span>
+                    <button
+                      disabled
+                      className="bg-gray-200 text-gray-500 text-xs px-4 py-2 rounded-lg cursor-not-allowed"
+                    >
+                      Locked
+                    </button>
                   </>
                 )}
               </div>

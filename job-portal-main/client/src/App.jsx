@@ -21,6 +21,8 @@ import Managepopup from './pages/admin/Managepopup';
 import TestGenerator from './pages/admin/TestGenerator';
 
 import { useEffect } from 'react';
+import UserProfile from './pages/user/UserProfile';
+import Status from './pages/user/Status';
 
 function AppContent() {
   const location = useLocation();
@@ -35,7 +37,9 @@ function AppContent() {
     '/user/CoverLetter',
     '/user/InterviewPreparation',
     '/user/InterviewSchedule',
-    '/user/UserDashboard'
+    '/user/UserDashboard',
+    '/user/Status',
+    '/user/UserProfile'
     // add more if needed
   ];
 
@@ -52,6 +56,8 @@ function AppContent() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/user/MockTest" element={<MockTest />} />
         <Route path="/user/ResumeBuilder" element={<ResumeBuilder />} />
+        <Route path='/user/UserProfile' element={<UserProfile/>}/>
+        <Route path='/user/Status' element={<Status/>}/>
         <Route path="/user/InterviewPreparation" element={<InterviewPreparation />} />
         <Route path="/user/CoverLetter" element={<CoverLetter />} />
         <Route path="/user/InterviewSchedule" element={<InterviewSchedule />} />
